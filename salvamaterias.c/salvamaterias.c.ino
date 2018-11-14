@@ -1,3 +1,6 @@
+#include <Time.h>
+#include <TimeLib.h>
+
 /*
  * Salvamaterias.c
  * Written in one swift move by:
@@ -8,15 +11,14 @@
  * >> Martin
  * https://xantorohara.github.io/led-matrix-editor/#8166661818666681
  */
- 
 #include <Keypad.h>
 #include "printer.h"
 #include "animator.h"
 
+
 //Predefined Messages
-const unsigned char *text1[] = {
-    "Aun no sabemos usar apuntadores ",
-    "popo"
+const unsigned char text1[] = {
+    "Aun no sabemos usar apuntadores "
 };
 const unsigned char text2[] PROGMEM = {
     "Por que Dios nos hizo asi "
@@ -43,10 +45,15 @@ const unsigned char text9[] PROGMEM = {
     "Si nadie entra a calidad, no nos pueden detener "
 };
 const unsigned char text10[] PROGMEM = {
-    "Bienvenido al proyecto final de avanzadas, selecciona una opcion:          "
+    "10 mensajes "
 };
+
+const unsigned char init_m[] PROGMEM = {
+   "Bienvenido al proyecto final de avanzadas, selecciona una opcion:     "
+};
+
 const unsigned char op1[] PROGMEM = {
-    "Presione alguna tecla del 1 al 10 para un mensaje pregrabado: "
+    "Selecciona un mensaje pregrabado: "
 };
 
 const byte ROWS = 4;
@@ -59,12 +66,10 @@ char hexaKeys[ROWS][COLS] = {
   {'*', '0', '#', 'D'}
 };
 
-byte rowPins[ROWS] = {9, 8, 7, 6}; 
-byte colPins[COLS] = {5, 4, 3, 2}; 
+byte rowPins[ROWS] = {10, 9, 8, 7}; 
+byte colPins[COLS] = {6, 5, 4, 3}; 
 
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys),rowPins,colPins,ROWS,COLS);
-
-
 /*
  * We set the board so that:
  * > It starts up in Power saving mode
@@ -73,6 +78,7 @@ Keypad customKeypad = Keypad(makeKeymap(hexaKeys),rowPins,colPins,ROWS,COLS);
 void setup(){
     //For the keypad
     Serial.begin(9600);
+    setTime(11,11,11,13,11,2018);
     //For the LCD Display
     for (int x=0; x<numDevices; x++){
         lc.shutdown(x,false);       
@@ -84,7 +90,7 @@ void setup(){
 void restartDisplay(){
   for (int x=0; x<numDevices; x++){
         lc.shutdown(x,false);       
-        lc.setIntensity(x,1);      
+        lc.setIntensity(x,8);      
         lc.clearDisplay(x);         
     }
 }
@@ -92,7 +98,9 @@ void restartDisplay(){
 int kn_pressed = 1;
 
 void loop(){
-  scrollMessage(text10);
+  time_t t = now();
+  Serial.println(weekday(t));
+  scrollMessage(init_m);
   restartDisplay();
   displayMenu();
   while(kn_pressed){
@@ -103,7 +111,40 @@ void loop(){
         case '1':
         restartDisplay();
         scrollMessage(op1);
-        //Codigo de seleccion de mensajes
+        switch(customKeypad.waitForKey()){
+          case '1':
+          scrollMessage(text1);
+          break;
+          case '2':
+          scrollMessage(text2);
+          break;
+          case '3':
+          scrollMessage(text3);
+          break;
+          case '4':
+          scrollMessage(text4);
+          break;
+          case '5':
+          scrollMessage(text5);
+          break;
+          case '6':
+          scrollMessage(text6);
+          break;
+          case '7':
+          scrollMessage(text7);
+          break;
+          case '8':
+          scrollMessage(text8);
+          break;
+          case '9':
+          scrollMessage(text9);
+          break;
+          case '0':
+          scrollMessage(text10);
+          break;
+          default:
+          break;
+        }
         //Fin seleccion
         restartDisplay();
         displayMenu();
@@ -118,10 +159,10 @@ void loop(){
         case '3':
         //Codigo de reloj
         restartDisplay();
+        restartDisplay();
         displayMenu();
         break;
         default:
-        //Codigo de salida
         restartDisplay();
         kn_pressed = 0;
         break;

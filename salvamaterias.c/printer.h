@@ -872,12 +872,12 @@ const unsigned char font5x7 [] PROGMEM = {
 //Amount of panels on the MAX7219 Panel
 const int numDevices = 4;    
 //Pin configuration
-const int DIN_PIN = 12;
-const int CLK_PIN = 11;
-const int CS_PIN = 10;
+const int DIN_PIN = 13;
+const int CLK_PIN = 12;
+const int CS_PIN = 11;
 
 //Delay of the panel, the less the faster it can become
-const long scrollDelay = 8;  
+const long scrollDelay = 10;  
 unsigned long bufferLong [14] = {0};
 
 LedControl lc = LedControl(DIN_PIN,CLK_PIN,CS_PIN,numDevices);
