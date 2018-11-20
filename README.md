@@ -44,12 +44,121 @@ El alfabeto y animaciones fueron creadas usando la página del proyecto de Xanto
 ## Código de la aplicación
 El principal componente para el manejo de los mensajes en Scroll es con el código a continuación:
 ```
- Pendiente
+ /*
+ * Print Message
+ * Este método imprime el mensaje utilizando el buffer, enmascarando cada bit.
+ * PARAMS:  None
+ * RETURNS: None
+ */
+void printMessage(){
+    int i;
+    // Loop 7 veces por el font de 5 x 7
+    for (i=0;i<7;i++){                    
+        // Se obtiene el valor bajo de buffer  
+        unsigned long x = messageBff [i*2];     
+        // Se copia el bit de orden mayor perdido en rotación
+        byte b = bitRead(x,31);
+        // Se copia el valor perdido en la rotación                 
+        x*=2;
+        // Se rota el bit a la izquierda                            
+        messageBff [i*2] = x;
+        // Store new low buffer                   
+        x = messageBff [i*2+1];
+        // Se obtiene la entrada más alta del buffer
+        x*=2;
+        // Se rota a la izquierda un bit                        
+        bitWrite(x,0,b);
+        // Se almacena este bit                      
+        messageBff [i*2+1] = x;
+        // Se almacena nuevamente este como el mayor valor
+    }
+    for (i = 0;i < 7; i++){  
+        // Se obtiene el valor del buffer               
+        unsigned long x = messageBff [i*2+1];
+        // Se enmascara el primer caracter   
+        byte y = x;           
+        // Se envia al chip MAX7219 correspondiente                
+        panelController.setRow(3,i,y);                       
+        x = messageBff [i*2];  
+        // Se enmascara el segundo caracter                    
+        y = (x>>24);        
+//       Se envia al chip MAX7219 correspondiente
+        panelController.setRow(2,i,y);  
+        // Se enmascara el tercero caracter                       
+        y = (x>>16);
+        //Se envia al chip MAX7219 correspondiente
+        panelController.setRow(1,i,y);     
+        // Se enmascara el cuarto caracter                    
+        y = (x>>8);
+        //Se envia al chip MAX7219 correspondiente
+        panelController.setRow(0,i,y);                       
+    }
+    delay(DELAY);
+}
+
+/*
+ * Load Message
+ * Este método carga el mensaje a la memoria del buffer
+ * PARAMS:  ascii, un caracter en ASCII
+ * RETURNS: None
+ */
+void loadMessage(int ascii){
+    if (!(ascii >= 32 && ascii <= 127))
+        return;
+    for (int i = 0;i < 7;i++){      
+        /*estas variables son long porque funcionan como apuntadores que guardan una fila de la letra, 
+        podemos cambiarlos a char * que es directamente 
+        el pointer pero no se si de errores de compilacion despues 
+        y no tengo como estarlo compilando gggg
+        */                
+        unsigned long c = pgm_read_byte_near(alphabet + ((ascii - 32) << 3) + i); 
+        unsigned long x = messageBff [i<<1];     
+        /* aqui funciona la magia del scroll, 
+         * lo que hace es que va reescribiendo el ultimo caracter con el nuevo, 
+         * o sea, la primera vez esta vacio y luego lo va pusheando
+         */
+        x |= c;                              
+        messageBff [i<<1] = x;                   
+    }
+    ///esta chistoso porque no hay byte en c, ç
+    //entonces esta definido en una libreria pero no se cuantos bytes tenga, 
+    //tiene mas de uno
+    int elementNear = alphabet + ((ascii - 32) << 3) + 7;
+    byte count = pgm_read_byte_near(elementNear); 
+    for (byte x = 0; x < count; x++){
+        printMessage();
+    }
+}
+
+/*
+ * Panel Print
+ * Este es el principal método para imprimir el mensaje en el panel
+ * PARAMS:  messageString, un mensaje en apuntador de char
+ * RETURNS: None
+ */
+void panelPrint(unsigned char * mssg) {
+    int i = 0;
+    ///no quiero mover esta funcion pero en teoria podrias manejar esto como un arreglo 
+    //y evitar llamar a traer esa funcion entonces solo seria algo como *(messageString)
+    int chr = pgm_read_byte_near(mssg);
+    while (chr != 0){
+        loadMessage(chr);
+        i++;
+        chr = pgm_read_byte_near(mssg + i);
+        //// y aqui seria algo como *(++messageString) aunque no se que pasa cuando llegas al final del arreglo i te regresa 0 o problemas con el pointer
+    } 
+}
 ```
 
 El código para el manejo de animaciones es dependiente de cada animación, pero el ejemplo de PacMan se maneja de la siguiente manera:
 ```
- Pendiente
+ void displayImage(const byte* image, int panel) {
+   for (int i = 0; i< 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        panelController.setLed(panel, i, j, bitRead(image[i], 7 - j));
+      }
+    } 
+}
 ```
 
 
@@ -59,7 +168,7 @@ El código para el manejo de animaciones es dependiente de cada animación, pero
 * **Luis Daniel Medina Cazarez** - *A01651070* - Algoritmo avanzado de Scroll de Mensajes y de animaciones
 * **Jorge Espinosa Lara** - *A01337002* - Desarrollador del algoritmo de animaciones y mantenedor de Github
 * **Andrés Bustamante Díaz** - *A01172912* - Desarollador del programa de reloj y Arduino Consultant
-* **Kai Uweda** - *A01334390* - Trabajo inicial, código de manejo del teclado y cableado del display líquido
+* **Kai Kawasaki Ueda** - *A01336424* - Trabajo inicial, código de manejo del teclado y cableado del display líquido
 
 ## Reconocimientos
 
