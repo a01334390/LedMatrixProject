@@ -1,21 +1,23 @@
-
-
 /*
- * Salvamaterias.c
- * Written in one swift move by:
- * >> Kai
- * >> Jorge
- * >> Andres
- * >> Daniel
- * >> Martin
- * https://xantorohara.github.io/led-matrix-editor/#8166661818666681
+ * Proyecto "Salvamaterias"
+ * Escrito por: 
+ * >> Kai Kawasaki Ueda - A01336424
+ * >> Jorge Espinosa Lara - A01337002
+ * >> Andrés Bustamante Díaz - A01172912
+ * >> Luis Daniel Medina Cazarez - A01651070
+ * >> Fernando Martin Garcia Del Angel
+ * Escrito y compilado por ultima vez el 19 de Nov. del 2018
  */
+
+ // Librerias requeridas
 #include <Keypad.h>
-#include "printer.h"
+#include "messages.h"
 #include "animator.h"
 
 
-//Predefined Messages
+/* Mensajes predefinidos
+ * Estos mensajes se almacenan en Disco (NO RAM) para salvar memoria
+ */
 const unsigned char text1[] = {
     "Aun no sabemos usar apuntadores "
 };
@@ -47,6 +49,8 @@ const unsigned char text10[] PROGMEM = {
     "1 -> 2 -> 3 -> 4 -> 5 -> 6"
 };
 
+// Mensajes para el menu
+
 const unsigned char defaulty[] PROGMEM = {
     "Esta opcion no existe"
 };
@@ -58,6 +62,12 @@ const unsigned char init_m[] PROGMEM = {
 const unsigned char op1[] PROGMEM = {
     "Selecciona un mensaje pregrabado: "
 };
+
+const unsigned char INTENS[] PROGMEM = {
+    "Indica una intensidad: "
+};
+
+// Codigo para manejar el teclado de matriz de 4x4
 
 const byte ROWS = 4;
 const byte COLS = 4;
@@ -73,72 +83,83 @@ byte rowPins[ROWS] = {10, 9, 8, 7};
 byte colPins[COLS] = {6, 5, 4, 3}; 
 
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys),rowPins,colPins,ROWS,COLS);
+
 /*
- * We set the board so that:
- * > It starts up in Power saving mode
- * > Intensity is low
+ * El programa inicia en modo de salvado de energia
+ * Le damos la intensidad mas baja al inicio y la cambiamos despues
+ * Reiniciamos el display
+ * Iniciamos una conexion serial para DEBUG
  */
+int intensity = 1;
+
 void setup(){
     //For the keypad
     Serial.begin(9600);
     //For the LCD Display
-    for (int x=0; x<numDevices; x++){
-        lc.shutdown(x,false);       
-        lc.setIntensity(x,1);      
-        lc.clearDisplay(x);         
-    }
+    restartDisplay();
 }
-
+/*
+ * Restart Display
+ * Contiene el codigo para reiniciar el display y darle una intensidad
+ * PARAMS: NONE
+ * RETURNS: NONE
+ */
 void restartDisplay(){
   for (int x=0; x<numDevices; x++){
-        lc.shutdown(x,false);       
-        lc.setIntensity(x,8);      
-        lc.clearDisplay(x);         
+        panelController.shutdown(x,false);       
+        panelController.setIntensity(x,intensity);      
+        panelController.clearDisplay(x);         
     }
 }
 
+/*
+ * Main Application loop
+ * Corre toda la logica de la aplicacion
+ */
 void loop(){
-  scrollMessage(init_m);
+  panelPrint(init_m);
   restartDisplay();
   displayMenu();
+  //Corre hasta el fin de los tiempos
   while(1){
-    char customKey = customKeypad.getKey();
+    //Bloqueamos al sistema para recibir un input
+    char customKey = customKeypad.waitForKey();
     if (customKey){
       Serial.println(customKey);
       switch(customKey){
         case '1':
         restartDisplay();
-        scrollMessage(op1);
+        panelPrint(op1);
         switch(customKeypad.waitForKey()){
           case '1':
-          scrollMessage(text1);
+          panelPrint(text1);
           break;
           case '2':
-          scrollMessage(text2);
+          panelPrint(text2);
           break;
           case '3':
-          scrollMessage(text3);
+          panelPrint(text3);
           break;
           case '4':
-          scrollMessage(text4);
+          panelPrint(text4);
           break;
           case '5':
-          scrollMessage(text5);
+          panelPrint(text5);
           break;
           case '6':
-          scrollMessage(text6);
+          panelPrint(text6);
           break;
           case '7':
-          scrollMessage(text7);
+          panelPrint(text7);
           break;
           case '8':
-          scrollMessage(text8);
+          panelPrint(text8);
           break;
           case '9':
-          scrollMessage(text9);
+          panelPrint(text9);
           break;
           case '0':
-          scrollMessage(text10);
+          panelPrint(text10);
           break;
           default:
           break;
@@ -148,26 +169,31 @@ void loop(){
         displayMenu();
         break;
         case '2':
-        //Codigo de animacion
+        //Codigo de animacion PACMAN
         restartDisplay();
         displayAnimation();
         restartDisplay();
         displayMenu();
         break;
         case '3':
-        //Codigo de reloj
+        //Codigo de animacion ARROW
         restartDisplay();
         displayAnimation2();
         restartDisplay();
         displayMenu();
         break;
+        case '4':
         restartDisplay();
-        displayAnimation3();
+        panelPrint(INTENS);
+        char sel = customKeypad.waitForKey();
+        int i_sel = sel - '0';
+        intensity = i_sel;
         restartDisplay();
         displayMenu();
+        break;
         default:
         restartDisplay();
-        scrollMessage(defaulty);
+        panelPrint(defaulty);
         restartDisplay();
         displayMenu();
         break;

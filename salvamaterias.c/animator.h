@@ -1,4 +1,12 @@
-
+/*
+ * Animation Library
+ * This handles the animations and menu on the panel
+ * https://xantorohara.github.io/led-matrix-editor/#8166661818666681
+ * Alpha Team 1.0
+ * Built on November 10th, 2018
+ * Refactored on November 19th, 2018
+ */
+ 
 const byte IMAGES[][8] = {
 {
   B00000000,
@@ -289,15 +297,26 @@ const int IMAGES_LEN2 = sizeof(IMAGES2)/8;
 const unsigned char pacwins[] PROGMEM = {
     "PACMAN WINS      "
 };
-
+/*
+ * Display Image
+ * Aplicacion principal para el despliegue de animaciones
+ * Escribe LED por LED la animacion en panel
+ * PARAMS: image, el arreglo de la imagen. int, el panel a donde enviar la animacion
+ * RETURNS: NONE
+ */
 void displayImage(const byte* image, int panel) {
    for (int i = 0; i< 8; i++) {
       for (int j = 0; j < 8; j++) {
-        lc.setLed(panel, i, j, bitRead(image[i], 7 - j));
+        panelController.setLed(panel, i, j, bitRead(image[i], 7 - j));
       }
     } 
 }
-
+/*
+ * Display Animation
+ * Escribe la animacion de PACMAN
+ * PARAMS: NONE
+ * RETURNS: NONE
+ */
 void displayAnimation(){
   //Show initial frame in all panels
   for(int i = 0; i < numDevices; i++){
@@ -311,13 +330,14 @@ void displayAnimation(){
     } 
   }
   //Show Pacman wins message
-  scrollMessage(pacwins);
+  panelPrint(pacwins);
   //Show Pacman endorsing
   for(int x = 0; x < IMAGES_LEN2; x++){
       displayImage(IMAGES2[x], numDevices-1);
       delay(50);
   }
 }
+
 const byte ARROW[][8] = {
 {
   B10001000,
@@ -389,7 +409,7 @@ void displayAnimation3(){
     } 
   }
   //Show Pacman wins message
-  scrollMessage(pacwins);
+  panelPrint(pacwins);
   //Show Pacman endorsing
   for(int x = 0; x < IMAGES_LEN2; x++){
       displayImage(IMAGES2[x], numDevices-1);
@@ -439,23 +459,23 @@ const byte MESSAGE[][8] = {
 const int MESSAGE_LEN = sizeof(MESSAGE)/8;
 
 
-const byte EXIT[][8] = {
+const byte INTENSITY[][8] = {
 {
-  B10000001,
-  B01100110,
-  B01100110,
-  B00011000,
-  B00011000,
-  B01100110,
-  B01100110,
-  B10000001
+  B00000000,
+  B00001000,
+  B00011100,
+  B00111110,
+  B00111110,
+  B00100010,
+  B00100010,
+  B00000010
 }};
-const int EXIT_LEN = sizeof(EXIT)/8;
+const int INTENSITY_LEN = sizeof(INTENSITY)/8;
 
 
 void displayMenu(){
   displayImage(MESSAGE[0],numDevices-1);
   displayImage(PACMAN[0],numDevices-2);
   displayImage(ARROW[0],numDevices-3);
-  displayImage(EXIT[0],numDevices-4);
+  displayImage(INTENSITY[0],numDevices-4);
 }
