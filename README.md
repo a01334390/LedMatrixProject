@@ -56,7 +56,7 @@ El código para el manejo de animaciones es dependiente de cada animación, pero
 ## Autores
 
 * **Fernando Martin Garcia Del Angel** - *A01334390* - Algoritmo inicial de Scroll y principal cableador
-* **Luis Daniel Medina Cazarez** - *A01334390* - Algoritmo avanzado de Scroll de Mensajes y de animaciones
+* **Luis Daniel Medina Cazarez** - *A01651070* - Algoritmo avanzado de Scroll de Mensajes y de animaciones
 * **Jorge Espinosa Lara** - *A01337002* - Desarrollador del algoritmo de animaciones y mantenedor de Github
 * **Andrés Bustamante Díaz** - *A01172912* - Desarollador del programa de reloj y Arduino Consultant
 * **Kai Uweda** - *A01334390* - Trabajo inicial, código de manejo del teclado y cableado del display líquido
