@@ -42,6 +42,8 @@ El proyecto fue desarrollado principalmente en C en el estándar '99 para desarr
 El alfabeto y animaciones fueron creadas usando la página del proyecto de Xantoro Hara en su IDE. Este se encuentra en [esta](https://xantorohara.github.io/led-matrix-editor/) página.
 
 ## Código de la aplicación
+Dividido en proyectos
+Proyecto 1
 El principal componente para el manejo de los mensajes en Scroll es con el código a continuación:
 ```
  /*
@@ -160,8 +162,37 @@ El código para el manejo de animaciones es dependiente de cada animación, pero
     } 
 }
 ```
-
-
+Proyecto 2
+Para la medición 
+```
+ void incTime() {
+  seconds++;
+  if (seconds == 60) {
+    seconds = 0;
+    minutes++;
+    if (minutes == 60) {
+      minutes = 0;
+      hours++;
+      if (hours == 24) {
+        hours = 0;
+        days++;
+        lcd.clear();
+        if (days == 7){
+          days = 0;
+        }
+      }
+    }
+  }
+}
+```
+Para el loop de tiempo
+```
+void loop() {
+  incTime();
+  printTime();
+  delay(1000);
+}
+```
 ## Autores
 
 * **Fernando Martin Garcia Del Angel** - *A01334390* - Algoritmo inicial de Scroll y principal cableador
