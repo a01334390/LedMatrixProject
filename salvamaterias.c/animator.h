@@ -318,6 +318,84 @@ void displayAnimation(){
       delay(50);
   }
 }
+const byte ARROW[][8] = {
+{
+  B10001000,
+  B11001100,
+  B11101110,
+  B11111111,
+  B11111111,
+  B11101110,
+  B11001100,
+  B10001000
+},{
+  B01000100,
+  B01100110,
+  B01110111,
+  B11111111,
+  B11111111,
+  B01110111,
+  B01100110,
+  B01000100
+},{
+  B00100010,
+  B00110011,
+  B10111011,
+  B11111111,
+  B11111111,
+  B10111011,
+  B00110011,
+  B00100010
+},{
+  B00010001,
+  B10011001,
+  B11011101,
+  B11111111,
+  B11111111,
+  B11011101,
+  B10011001,
+  B00010001
+}};
+const int ARROWS = sizeof(ARROW)/8;
+
+void displayAnimation2(){
+  //Show initial frame in all panels
+  for(int i = 0; i < numDevices; i++){
+    displayImage(ARROW[0], i);
+  }
+
+for(int x = 0; x < 10; x++){
+ for(int i = 0; i < numDevices; i++){
+    displayImage(ARROW[i], 0);
+    displayImage(ARROW[i], 1);
+    displayImage(ARROW[i], 2);
+    displayImage(ARROW[i], 3);
+    delay(1);
+  } 
+}
+
+}
+
+void displayAnimation3(){
+  //Show initial frame in all panels
+  for(int i = 0; i < numDevices; i++){
+    displayImage(IMAGES[0], i);
+  }
+  //Eating Pacman
+  for(int panel = numDevices; panel > -1; --panel){
+    for(int x = 0; x < IMAGES_LEN; x++){
+      displayImage(IMAGES[x], panel);
+      delay(10);
+    } 
+  }
+  //Show Pacman wins message
+  scrollMessage(pacwins);
+  //Show Pacman endorsing
+  for(int x = 0; x < IMAGES_LEN2; x++){
+      displayImage(IMAGES2[x], numDevices-1);
+      delay(50);
+  }
+}
 
 
 
@@ -378,6 +456,6 @@ const int EXIT_LEN = sizeof(EXIT)/8;
 void displayMenu(){
   displayImage(MESSAGE[0],numDevices-1);
   displayImage(PACMAN[0],numDevices-2);
-  displayImage(CLOCK[0],numDevices-3);
+  displayImage(ARROW[0],numDevices-3);
   displayImage(EXIT[0],numDevices-4);
 }

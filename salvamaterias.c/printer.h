@@ -886,10 +886,10 @@ void rotateBufferLong(){
     for (int a=0;a<7;a++){                      // Loop 7 times for a 5x7 font
         unsigned long x = bufferLong [a*2];     // Get low buffer entry
         byte b = bitRead(x,31);                 // Copy high order bit that gets lost in rotation
-        x = x<<1;                               // Rotate left one bit
+        x*=2;                               // Rotate left one bit
         bufferLong [a*2] = x;                   // Store new low buffer
         x = bufferLong [a*2+1];                 // Get high buffer entry
-        x = x<<1;                               // Rotate left one bit
+        x*=2;                               // Rotate left one bit
         bitWrite(x,0,b);                        // Store saved bit
         bufferLong [a*2+1] = x;                 // Store new high buffer
     }

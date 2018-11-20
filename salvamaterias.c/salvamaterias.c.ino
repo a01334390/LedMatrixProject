@@ -1,5 +1,4 @@
-#include <Time.h>
-#include <TimeLib.h>
+
 
 /*
  * Salvamaterias.c
@@ -45,7 +44,11 @@ const unsigned char text9[] PROGMEM = {
     "Si nadie entra a calidad, no nos pueden detener "
 };
 const unsigned char text10[] PROGMEM = {
-    "10 mensajes "
+    "1 -> 2 -> 3 -> 4 -> 5 -> 6"
+};
+
+const unsigned char defaulty[] PROGMEM = {
+    "Esta opcion no existe"
 };
 
 const unsigned char init_m[] PROGMEM = {
@@ -78,7 +81,6 @@ Keypad customKeypad = Keypad(makeKeymap(hexaKeys),rowPins,colPins,ROWS,COLS);
 void setup(){
     //For the keypad
     Serial.begin(9600);
-    setTime(11,11,11,13,11,2018);
     //For the LCD Display
     for (int x=0; x<numDevices; x++){
         lc.shutdown(x,false);       
@@ -95,15 +97,11 @@ void restartDisplay(){
     }
 }
 
-int kn_pressed = 1;
-
 void loop(){
-  time_t t = now();
-  Serial.println(weekday(t));
   scrollMessage(init_m);
   restartDisplay();
   displayMenu();
-  while(kn_pressed){
+  while(1){
     char customKey = customKeypad.getKey();
     if (customKey){
       Serial.println(customKey);
@@ -159,12 +157,19 @@ void loop(){
         case '3':
         //Codigo de reloj
         restartDisplay();
+        displayAnimation2();
         restartDisplay();
         displayMenu();
         break;
+        restartDisplay();
+        displayAnimation3();
+        restartDisplay();
+        displayMenu();
         default:
         restartDisplay();
-        kn_pressed = 0;
+        scrollMessage(defaulty);
+        restartDisplay();
+        displayMenu();
         break;
       }
     }

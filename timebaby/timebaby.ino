@@ -1,9 +1,9 @@
 #include <LiquidCrystal.h>
 
-unsigned int days = 2;
-unsigned int hours = 12;
-unsigned int minutes = 45;
-unsigned int seconds = 45;
+unsigned int days = 4;
+unsigned int hours = 16;
+unsigned int minutes = 22;
+unsigned int seconds = 0;
 
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -35,7 +35,7 @@ void printTime() {
   sprintf(time, "  %02i:%02i:%02i", hours, minutes, seconds);
   lcd.print(time);
   switch(days){
-    case 9:
+    case 0:
     lcd.setCursor(0,0);
     lcd.print("lunes");
     break;
